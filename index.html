@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>TapReport</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <span>💧</span>
+        <h1>TapReport</h1>
+    </header>
+    
+    <div class="container">
+        <div class="card">
+            <h2 style="margin-top: 0; color: var(--text-color);">Report an Issue</h2>
+            <p style="color: #6c757d; margin-bottom: 20px;">Use the map, select the issue type, and alert authorities instantly.</p>
+            
+            <div id="map"></div>
+            
+            <form id="reportForm" style="margin-top: 20px;">
+                
+                <!-- NEW DROPDOWN FIELD -->
+                <div class="form-group">
+                    <label for="issueType">Type of Issue</label>
+                    <select id="issueType" required style="width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #dbe0e5; box-sizing: border-box; font-size: 15px; background: white;">
+                        <option value="tap">🚰 Broken Water Tap</option>
+                        <option value="drainage">⚠️ Drainage Blockage</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="locationName">Location / Landmark</label>
+                    <input type="text" id="locationName" placeholder="e.g. Near bus stand, Main Street" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="description">Describe the Issue</label>
+                    <textarea id="description" placeholder="e.g. The tap is leaking heavily, or water is overflowing from the drain" required></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="photo">Upload a Photo</label>
+                    <input type="file" id="photo" accept="image/*" capture="environment" required>
+                </div>
+                
+                <button type="submit" id="submitBtn">📢 Submit Report</button>
+                <div id="loader" class="hidden">Uploading report... Please wait.</div>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

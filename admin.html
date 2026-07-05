@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>TapReport Admin</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+</head>
+<body>
+    <header>
+        <span>🔧</span>
+        <h1>Admin Dashboard</h1>
+        <a href="index.html" class="back-link">← Back to Map</a>
+    </header>
+
+    <div class="container admin-container">
+        <div id="reportsGrid" class="admin-grid"></div>
+    </div>
+
+    <script>
+        // --- REPLACE WITH YOUR CONFIG AGAIN ---
+        const firebaseConfig = {
+  apiKey: "AIzaSyCzyUaSlPqH8Kp5d_M6TY_Y5bCxkMrNOcg",
+  authDomain: "tapreport-d5036.firebaseapp.com",
+  projectId: "tapreport-d5036",
+  storageBucket: "tapreport-d5036.firebasestorage.app",
+  messagingSenderId: "831228860735",
+  appId: "1:831228860735:web:449005b524835df7b95b8a",
+  measurementId: "G-FZ7H8M1VVJ"
+};
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        function renderReports() {
+            const grid = document.getElementById('reportsGrid');
+            grid.innerHTML = '<div class="loading-text">Loading reports...</div>';
+
+            db.collection('reports').orderBy('timestamp', 'desc').onSnapshot((snapshot) => {
+                grid.innerHTML = '';
+                snapshot.forEach((doc) => {
+                    const data = doc.data();
+                    const id = doc.id;
+                    
+                    const issueTypeLabel = data.issueType === 'drainage' ? '⚠️ Drainage' : '🚰 Tap';
+                    
+                    const card = document.createElement('div');
+                    card.className = 'card admin-card';
+                    card.innerHTML = `
+                        <h3>📍 ${data.locationName}</h3>
+                        <div class="meta-row">
+                            <span><b>Type:</b> ${issueTypeLabel}</span>
+                            <span class="status-badge ${data.status}">${data.status}</span>
+                        </div>
+                        <p>${data.description}</p>
+                        <img src="${data.photoURL}" alt="Issue photo">
+                        <div class="meta-row" style="margin-top: 8px;">
+                            <span>👍 <b>${data.upvotes || 0}</b> Upvotes</span>
+                        </div>
+                        <div class="admin-actions">
+                            ${data.status !== 'fixed' ? `<button class="btn btn-blue" onclick="updateStatus('${id}', 'fixed')">✅ Mark Fixed</button>` : ''}
+                            ${data.status === 'pending' ? `<button class="btn btn-cyan" onclick="updateStatus('${id}', 'in-progress')">🛠️ In-Progress</button>` : ''}
+                        </div>
+                    `;
+                    grid.appendChild(card);
+                });
+            });
+        }
+
+        // Admin Status Update Function
+        window.updateStatus = async (id, newStatus) => {
+            try {
+                await db.collection('reports').doc(id).update({ status: newStatus });
+                alert(`Report marked as ${newStatus}!`);
+            } catch (error) {
+                alert("Error updating status: " + error.message);
+            }
+        };
+
+        renderReports();
+    </script>
+</body>
+</html>
